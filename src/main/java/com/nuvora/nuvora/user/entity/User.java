@@ -2,6 +2,7 @@ package com.nuvora.nuvora.user.entity;
 
 import com.nuvora.nuvora.address.entity.Address;
 
+import com.nuvora.nuvora.cart.entity.Cart;
 import com.nuvora.nuvora.order.entity.Order;
 import com.nuvora.nuvora.profile.entity.Profile;
 import com.nuvora.nuvora.review.entity.Review;
@@ -35,6 +36,9 @@ public class User  {
 
     @OneToOne(mappedBy = "user")
     private Address address;
+
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();

@@ -1,19 +1,35 @@
 package com.nuvora.nuvora.payment.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.nuvora.nuvora.common.entity.BaseEntity;
+import com.nuvora.nuvora.order.entity.Order;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.math.BigDecimal;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
+public class Payment extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @Column(unique = true)
+    private String stripePaymentIntentId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus status;
+
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal amount;
 }

@@ -2,6 +2,7 @@ package com.nuvora.nuvora.order.entity;
 
 import com.nuvora.nuvora.common.entity.BaseEntity;
 import com.nuvora.nuvora.orderItens.entity.OrderItem;
+import com.nuvora.nuvora.payment.entity.Payment;
 import com.nuvora.nuvora.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,4 +37,7 @@ public class Order extends BaseEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne(mappedBy = "order")
+    private Payment payment;
 }

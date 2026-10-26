@@ -32,6 +32,8 @@ public class ProductVariant {
 
     private boolean isDefault;
 
+    private boolean active = true;
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

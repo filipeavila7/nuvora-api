@@ -1,17 +1,22 @@
 package com.nuvora.nuvora.user.entity;
 
 import com.nuvora.nuvora.address.entity.Address;
+
+import com.nuvora.nuvora.order.entity.Order;
 import com.nuvora.nuvora.profile.entity.Profile;
+import com.nuvora.nuvora.review.entity.Review;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,12 +30,17 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole = UserRole.CLIENT;
 
-    // relacionamentos:
     @OneToOne(mappedBy = "user")
     private Profile profile;
 
     @OneToOne(mappedBy = "user")
     private Address address;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
 
 
 

@@ -1,4 +1,8 @@
 package com.nuvora.nuvora.user.dto.response;
 
-public class UserResponse {
+public record UserResponse(
+        Long id,
+        String name,
+        String profileImageUrl
+) {
 }

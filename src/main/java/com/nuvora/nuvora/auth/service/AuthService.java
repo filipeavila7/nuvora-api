@@ -4,12 +4,15 @@ package com.nuvora.nuvora.auth.service;
 
 import com.nuvora.nuvora.auth.dto.request.AuthRequest;
 import com.nuvora.nuvora.auth.dto.response.TokenResponse;
+import com.nuvora.nuvora.helper.GlobalHelperService;
 import com.nuvora.nuvora.jwt.JwtService;
+import com.nuvora.nuvora.profile.service.ProfileService;
 import com.nuvora.nuvora.refreshToken.dto.response.RotatedRefreshToken;
 import com.nuvora.nuvora.refreshToken.service.RefreshTokenService;
 import com.nuvora.nuvora.user.dto.request.UserRequest;
 import com.nuvora.nuvora.user.entity.User;
 import com.nuvora.nuvora.user.entity.UserRole;
+import com.nuvora.nuvora.user.mapper.UserMapper;
 import com.nuvora.nuvora.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,10 +30,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final UserMapper userMapper;
+    private final ProfileService profileService;
 
     public TokenResponse register(UserRequest request) {
         String email = normalizeEmail(request.email());
 
+        // verifica se o email ja foi usado
         if (userRepository.existsByEmail(email)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -38,16 +44,20 @@ public class AuthService {
             );
         }
 
-        User user = new User();
-        user.setName(request.name());
-        user.setEmail(email);
+
+        User user = userMapper.toEntity(request);
+
+        // criptografa a senha
         user.setPassword(
                 passwordEncoder.encode(request.password())
         );
-        user.setUserRole(UserRole.CLIENT);
+
+        // cria uma profile pro usuario
+        profileService.createUserProfile(user);
 
         userRepository.save(user);
 
+        // ja retorna o jwt
         return generateToken(user);
     }
 

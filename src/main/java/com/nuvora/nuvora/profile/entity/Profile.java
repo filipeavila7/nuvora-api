@@ -25,4 +25,10 @@ public class Profile {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Profile(String profileUrlImg, String cpf, User user) {
+        this.profileUrlImg = profileUrlImg;
+        this.cpf = cpf;
+        this.user = user;
+    }
 }

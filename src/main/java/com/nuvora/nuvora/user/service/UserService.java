@@ -1,5 +1,6 @@
 package com.nuvora.nuvora.user.service;
 
+import com.nuvora.nuvora.helper.GlobalHelperService;
 import com.nuvora.nuvora.user.dto.request.UserRequest;
 import com.nuvora.nuvora.user.dto.response.UserResponse;
 import com.nuvora.nuvora.user.entity.User;
@@ -19,7 +20,13 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserHelper userHelper;
     private final PasswordEncoder passwordEncoder;
+    private final GlobalHelperService globalHelperService;
 
+
+    // pegar logado
+    public UserResponse getMe(){
+        return userMapper.toUserResponse(globalHelperService.getLoggedUser());
+    }
 
     // criar usuário
     public UserResponse createUser(UserRequest request){

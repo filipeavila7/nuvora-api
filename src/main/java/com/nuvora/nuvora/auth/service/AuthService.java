@@ -5,6 +5,8 @@ package com.nuvora.nuvora.auth.service;
 import com.nuvora.nuvora.auth.dto.request.AuthRequest;
 import com.nuvora.nuvora.auth.dto.response.TokenResponse;
 import com.nuvora.nuvora.jwt.JwtService;
+import com.nuvora.nuvora.refreshToken.dto.response.RotatedRefreshToken;
+import com.nuvora.nuvora.refreshToken.service.RefreshTokenService;
 import com.nuvora.nuvora.user.dto.request.UserRequest;
 import com.nuvora.nuvora.user.entity.User;
 import com.nuvora.nuvora.user.entity.UserRole;
@@ -24,6 +26,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     public TokenResponse register(UserRequest request) {
         String email = normalizeEmail(request.email());
@@ -74,13 +77,40 @@ public class AuthService {
     }
 
     private TokenResponse generateToken(User user) {
-        String token = jwtService.generateAccessToken(
+        String accessToken = jwtService.generateAccessToken(
                 user.getEmail(),
                 user.getUserRole().name()
         );
 
-        return new TokenResponse(token, "Bearer");
+        String refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return new TokenResponse(
+                accessToken,
+                refreshToken,
+                "Bearer"
+        );
     }
+
+
+
+    public TokenResponse refresh(String rawRefreshToken) {
+        RotatedRefreshToken rotated =
+                refreshTokenService.rotateRefreshToken(rawRefreshToken);
+
+        String accessToken = jwtService.generateAccessToken(
+                rotated.user().getEmail(),
+                rotated.user().getUserRole().name()
+        );
+
+        return new TokenResponse(
+                accessToken,
+                rotated.rawToken(),
+                "Bearer"
+        );
+    }
+
+
 
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);

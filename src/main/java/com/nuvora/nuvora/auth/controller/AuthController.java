@@ -5,6 +5,7 @@ package com.nuvora.nuvora.auth.controller;
 import com.nuvora.nuvora.auth.dto.request.AuthRequest;
 import com.nuvora.nuvora.auth.dto.response.TokenResponse;
 import com.nuvora.nuvora.auth.service.AuthService;
+import com.nuvora.nuvora.refreshToken.dto.request.RefreshRequest;
 import com.nuvora.nuvora.user.dto.request.UserRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,11 @@ public class AuthController {
             @Valid @RequestBody AuthRequest request
     ) {
         return authService.login(request);
+    }
+
+
+    @PostMapping("/refresh")
+    public TokenResponse refresh(@Valid @RequestBody RefreshRequest request) {
+        return authService.refresh(request.refreshToken());
     }
 }

@@ -28,7 +28,7 @@ public class JwtConfig {
 
     @Bean
     public SecretKey jwtSecretKey(
-            @Value("${jwt.secret}") String secret
+            @Value("${JWT_SECRET}") String secret
     ) {
         byte[] keyBytes = java.util.Base64.getDecoder()
                 .decode(secret);

@@ -1,5 +1,6 @@
 package com.nuvora.nuvora;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,6 +8,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class NuvoraApplication {
 
 	public static void main(String[] args) {
+		Dotenv dotenv = Dotenv.configure()
+				.ignoreIfMissing()
+				.load();
+
+		System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
+		System.setProperty("DB_URL", dotenv.get("DB_URL"));
+		System.setProperty("DB_USER", dotenv.get("DB_USER"));
+		System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
+
+
 		SpringApplication.run(NuvoraApplication.class, args);
 	}
 

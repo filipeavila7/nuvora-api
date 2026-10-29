@@ -1,8 +1,8 @@
 package com.nuvora.nuvora.config.exceptions;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,21 +15,43 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    public record ErrorResponse(
+            int status,
+            String code,
+            String message
+    ) {}
+
+    public record ValidationErrorResponse(
+            int status,
+            String code,
+            Map<String, String> errors
+    ) {}
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(
             ResponseStatusException ex
     ) {
+        HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
+
+        String code = switch (status) {
+            case UNAUTHORIZED -> "UNAUTHORIZED";
+            case FORBIDDEN -> "FORBIDDEN";
+            case NOT_FOUND -> "NOT_FOUND";
+            case BAD_REQUEST -> "BAD_REQUEST";
+            case CONFLICT -> "CONFLICT";
+            default -> "REQUEST_ERROR";
+        };
+
         ErrorResponse error = new ErrorResponse(
-                ex.getStatusCode().value(),
-                ex.getReason()
+                status.value(),
+                code,
+                ex.getReason() != null
+                        ? ex.getReason()
+                        : "Ocorreu um erro na requisição"
         );
 
-        return ResponseEntity
-                .status(ex.getStatusCode())
-                .body(error);
+        return ResponseEntity.status(status).body(error);
     }
-
-    public record ErrorResponse(int status, String message) {}
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationException(
@@ -46,35 +68,27 @@ public class GlobalExceptionHandler {
 
         ValidationErrorResponse response = new ValidationErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
+                "VALIDATION_ERROR",
                 errors
         );
 
-        return ResponseEntity
-                .badRequest()
-                .body(response);
+        return ResponseEntity.badRequest().body(response);
     }
 
-    public record ValidationErrorResponse(
-            int status,
-            Map<String, String> errors
-    ) {}
-
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpectedException(
-            Exception ex
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(
+            BadCredentialsException ex
     ) {
         ErrorResponse error = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Ocorreu um erro interno no servidor"
+                HttpStatus.UNAUTHORIZED.value(),
+                "INVALID_CREDENTIALS",
+                "Email ou senha incorretos"
         );
 
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(error);
     }
-
-
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(
@@ -82,6 +96,7 @@ public class GlobalExceptionHandler {
     ) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
+                "NOT_FOUND",
                 "Endpoint não encontrado"
         );
 
@@ -90,4 +105,18 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(
+            Exception ex
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "INTERNAL_SERVER_ERROR",
+                "Ocorreu um erro interno no servidor"
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(error);
+    }
 }

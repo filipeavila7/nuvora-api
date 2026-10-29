@@ -41,6 +41,7 @@ public class SecurityConfig {
                     GlobalExceptionHandler.ErrorResponse error =
                             new GlobalExceptionHandler.ErrorResponse(
                                     HttpStatus.UNAUTHORIZED.value(),
+                                    "AUTHENTICATION_REQUIRED",
                                     "Autenticação necessária"
                             );
 

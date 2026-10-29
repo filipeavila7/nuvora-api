@@ -92,7 +92,9 @@ public class AuthService {
         );
     }
 
-
+    public void logout(String refreshToken) {
+        refreshTokenService.revokeRefreshToken(refreshToken);
+    }
 
     public TokenResponse refresh(String rawRefreshToken) {
         RotatedRefreshToken rotated =

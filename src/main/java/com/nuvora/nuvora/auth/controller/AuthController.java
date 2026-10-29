@@ -10,6 +10,7 @@ import com.nuvora.nuvora.user.dto.request.UserRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,15 +29,24 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public TokenResponse login(
+    public ResponseEntity<TokenResponse>  login(
             @Valid @RequestBody AuthRequest request
     ) {
-        return authService.login(request);
+        return ResponseEntity.ok(authService.login(request));
     }
 
 
     @PostMapping("/refresh")
     public TokenResponse refresh(@Valid @RequestBody RefreshRequest request) {
         return authService.refresh(request.refreshToken());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @Valid @RequestBody RefreshRequest request
+    ) {
+        authService.logout(request.refreshToken());
+
+        return ResponseEntity.noContent().build();
     }
 }

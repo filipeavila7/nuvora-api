@@ -38,16 +38,16 @@ public class User  {
     @OneToOne(mappedBy = "user")
     private Profile profile;
 
-    @OneToOne(mappedBy = "user")
-    private Address address;
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Address> address = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
 

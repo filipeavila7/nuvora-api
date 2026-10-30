@@ -2,29 +2,55 @@ package com.nuvora.nuvora.address.entity;
 
 import com.nuvora.nuvora.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_address_user",
+                        columnNames = {
+                                "user_id",
+                                "zip_code",
+                                "street",
+                                "number",
+                                "complement"
+                        }
+                )
+        }
+)
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
-
+    @Column(nullable = false)
     private String street;
+
+    @Column(nullable = false)
     private String number;
+
+    @Column(nullable = false)
     private String neighborhood;
+
+    @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
     private String state;
+
+    @Column(nullable = false)
     private String zipCode;
+
+    @Column
+    private String complement;
 }

@@ -1,20 +1,43 @@
 package com.nuvora.nuvora.address;
 
+import com.nuvora.nuvora.address.dto.request.AddressRequest;
 import com.nuvora.nuvora.address.dto.request.PutAddressRequest;
 import com.nuvora.nuvora.address.entity.Address;
 import com.nuvora.nuvora.address.mapper.AddressMapper;
+import com.nuvora.nuvora.address.repository.AddressRepository;
+import com.nuvora.nuvora.address.service.AddressService;
+import com.nuvora.nuvora.helper.GlobalHelperService;
 import com.nuvora.nuvora.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+
+
+@ExtendWith(MockitoExtension.class)
 public class AddressServiceTest {
 
     private final AddressMapper mapper =
             Mappers.getMapper(AddressMapper.class);
+
+    @Mock
+    private AddressRepository addressRepository;
+
+    @Mock
+    private GlobalHelperService globalHelperService;
+
+    @InjectMocks
+    private AddressService addressService;
 
 
     @Test
@@ -61,6 +84,43 @@ public class AddressServiceTest {
 
         // verifica se ocorreu mudança em valores que não foram passados
         assertEquals("1234567", address.getZipCode());
+
+    }
+
+
+    @Test
+    @DisplayName("deve lançar exceção caso o usuario tente criar um endereço duplicado")
+    void shouldThrowExceptionWhenUserAlreadyHasAddress(){
+
+        // criação dos dados
+        AddressRequest request = new AddressRequest("rua shipo", "12", "bairro shipo",
+                "cidade shipo", "SP", "1239574", "shipo shipo");
+
+
+        User loggedUser = new User();
+        loggedUser.setId(1L);
+
+
+        when(globalHelperService.getLoggedUser())
+                .thenReturn(loggedUser);
+
+        // o metodo deve retornar true, ou seja existe repetido
+        when(addressRepository.existsByUserIdAndZipCodeAndStreetAndNumberAndComplement(1L, "1239574",
+                "rua shipo", "12", "shipo shipo")).thenReturn(true);
+
+
+
+        // testar se a service vai lançar a exceção esperada
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> addressService.createAdress(request));
+
+
+        // testa pra ver se retornou o 409
+        assertEquals(409, exception.getStatusCode().value());
+
+
+        // verifica tambem se o metodo de save() nunca foi chamado
+        verify(addressRepository, never()).save(any(Address.class));
 
     }
 }

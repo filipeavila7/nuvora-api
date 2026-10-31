@@ -78,7 +78,7 @@ public class AddressService {
 
     // editar o endereço pelo id
     @Transactional
-    public AddressResponse editAddress(PutAddressRequest request, Long addressId){
+    public AddressResponse updateAddress(PutAddressRequest request, Long addressId){
         Address address = findAddressById(addressId);
 
         // Atualiza somente os campos enviados

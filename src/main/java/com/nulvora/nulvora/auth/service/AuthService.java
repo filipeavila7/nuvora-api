@@ -1,0 +1,128 @@
+package com.nulvora.nulvora.auth.service;
+
+
+
+import com.nulvora.nulvora.auth.dto.request.AuthRequest;
+import com.nulvora.nulvora.auth.dto.response.TokenResponse;
+import com.nulvora.nulvora.jwt.JwtService;
+import com.nulvora.nulvora.profile.service.ProfileService;
+import com.nulvora.nulvora.refreshToken.dto.response.RotatedRefreshToken;
+import com.nulvora.nulvora.refreshToken.service.RefreshTokenService;
+import com.nulvora.nulvora.user.dto.request.UserRequest;
+import com.nulvora.nulvora.user.entity.User;
+import com.nulvora.nulvora.user.mapper.UserMapper;
+import com.nulvora.nulvora.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Locale;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
+    private final UserMapper userMapper;
+    private final ProfileService profileService;
+
+    public TokenResponse register(UserRequest request) {
+        String email = normalizeEmail(request.email());
+
+        // verifica se o email ja foi usado
+        if (userRepository.existsByEmail(email)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Email já cadastrado"
+            );
+        }
+
+
+        User user = userMapper.toEntity(request);
+
+        // criptografa a senha
+        user.setPassword(
+                passwordEncoder.encode(request.password())
+        );
+
+        // cria uma profile pro usuario
+        profileService.createUserProfile(user);
+
+        userRepository.save(user);
+
+        // ja retorna o jwt
+        return generateToken(user);
+    }
+
+
+    public TokenResponse login(AuthRequest request) {
+        String email = normalizeEmail(request.email());
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.UNAUTHORIZED,
+                                "Email ou senha inválidos"
+                        )
+                );
+
+        if (!passwordEncoder.matches(
+                request.password(),
+                user.getPassword()
+        )) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Email ou senha inválidos"
+            );
+        }
+
+        return generateToken(user);
+    }
+
+    private TokenResponse generateToken(User user) {
+        String accessToken = jwtService.generateAccessToken(
+                user.getEmail(),
+                user.getUserRole().name()
+        );
+
+        String refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return new TokenResponse(
+                accessToken,
+                refreshToken,
+                "Bearer"
+        );
+    }
+
+    public void logout(String refreshToken) {
+        refreshTokenService.revokeRefreshToken(refreshToken);
+    }
+
+    public TokenResponse refresh(String rawRefreshToken) {
+        RotatedRefreshToken rotated =
+                refreshTokenService.rotateRefreshToken(rawRefreshToken);
+
+        String accessToken = jwtService.generateAccessToken(
+                rotated.user().getEmail(),
+                rotated.user().getUserRole().name()
+        );
+
+        return new TokenResponse(
+                accessToken,
+                rotated.rawToken(),
+                "Bearer"
+        );
+    }
+
+
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
+}

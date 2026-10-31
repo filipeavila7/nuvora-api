@@ -162,7 +162,7 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
 - [ ] **[P0]** **Módulo de Produtos (`product`)**
   - Estado Atual: Entidade `Product` básica com relacionamento para `ProductVariant` e `Category`. DTOs e Service vazios.
   - [ ] Definir `ProductRequest` contendo: `name`, `description`, `categoryId`, e opcionalmente variantes iniciais.
-  - [ ] Definir `ProductResponse` contendo resumo do produto, categoria e lista de variantes disponíveis.
+  - [ ] Definir `ProductPostResponse` contendo resumo do produto, categoria e lista de variantes disponíveis.
   - [ ] Implementar `ProductService`:
     - Cadastrar produto validando existência e status ativo da categoria informada.
     - Atualizar produto e gerenciar associação com categorias.

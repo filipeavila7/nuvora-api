@@ -3,6 +3,7 @@ package com.nulvora.nulvora.productVariant.entity;
 import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.productImg.entity.ProductImg;
 import com.nulvora.nulvora.review.entity.Review;
+import com.nulvora.nulvora.variantAttribute.entity.VariantAttribute;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -49,4 +50,9 @@ public class ProductVariant {
 
     @OneToMany(mappedBy = "productVariant")
     private List<ProductImg> productImgs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "productVariant")
+    private List<VariantAttribute> variantAttributes = new ArrayList<>();
+
+
 }

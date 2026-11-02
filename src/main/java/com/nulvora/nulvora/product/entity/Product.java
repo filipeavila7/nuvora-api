@@ -1,6 +1,7 @@
 package com.nulvora.nulvora.product.entity;
 
 import com.nulvora.nulvora.category.entity.Category;
+import com.nulvora.nulvora.productAttribute.entity.ProductAttribute;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,9 +33,14 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<ProductVariant> productVariants = new ArrayList<>();
 
+    @OneToMany(mappedBy = "prodcut", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<ProductAttribute> productAttributes = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+
 
 
 }

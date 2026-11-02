@@ -29,5 +29,4 @@ public class VariantAttribute {
     private ProductVariant productVariant;
 
 
-
 }

@@ -33,7 +33,7 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<ProductVariant> productVariants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "prodcut", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<ProductAttribute> productAttributes = new ArrayList<>();
 
     @ManyToOne

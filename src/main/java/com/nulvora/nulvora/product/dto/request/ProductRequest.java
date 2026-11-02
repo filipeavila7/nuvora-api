@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 public record ProductRequest(
         @NotBlank
         @Size(max = 100, message = "O nome do produto deve ter no máximo 100 caracters")
@@ -19,6 +21,13 @@ public record ProductRequest(
 
         @NotBlank
         @Size(max = 300, message = "A url da imagem é muito grande")
-        String imageUrl
+        String imageUrl,
+
+       List<ProductAttributeRequest> attributes
+
+
+
+
+
 ) {
 }

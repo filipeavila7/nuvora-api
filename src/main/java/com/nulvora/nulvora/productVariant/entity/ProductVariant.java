@@ -25,10 +25,7 @@ public class ProductVariant {
     private String sku;
 
     @Column(nullable = false)
-    private String color;
-
-    @Column(nullable = false)
-    private String size;
+    private String name;
 
     @Column(nullable = false)
     private BigDecimal price;

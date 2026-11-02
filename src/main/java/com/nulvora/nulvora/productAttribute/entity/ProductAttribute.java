@@ -31,8 +31,7 @@ public class ProductAttribute {
     @JoinColumn(name = "product_id")
     private Product product;
 
-
     @OneToMany(mappedBy = "productAttribute")
-    private List<ProductAttributeOption> productAttributeOptions = new ArrayList<>();
+    private List<ProductAttributeOption> options = new ArrayList<>();
 
 }

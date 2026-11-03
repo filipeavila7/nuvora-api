@@ -1,6 +1,7 @@
 package com.nulvora.nulvora.product.entity;
 
 import com.nulvora.nulvora.category.entity.Category;
+import com.nulvora.nulvora.common.entity.BaseEntity;
 import com.nulvora.nulvora.productAttribute.entity.ProductAttribute;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,6 +40,12 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+
+    public void addProductAttribute(ProductAttribute attribute) {
+        productAttributes.add(attribute);
+        attribute.setProduct(this);
+    }
 
 
 

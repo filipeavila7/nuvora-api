@@ -10,7 +10,9 @@ import com.nulvora.nulvora.product.mapper.ProductMapper;
 import com.nulvora.nulvora.product.repository.ProductRepository;
 import com.nulvora.nulvora.productAttribute.entity.ProductAttribute;
 import com.nulvora.nulvora.productAttribute.service.ProductAttributeService;
+import com.nulvora.nulvora.productAttributeOption.entity.ProductAttributeOption;
 import com.nulvora.nulvora.productAttributeOption.service.ProductAttributeOptionService;
+import com.nulvora.nulvora.productVariant.service.ProductVariantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +25,12 @@ public class ProductService {
     private final GlobalHelperService globalHelperService;
     private final ProductAttributeService productAttributeService;
     private final ProductAttributeOptionService productAttributeOptionService;
+    private final ProductVariantService productVariantService;
 
 
     // criar produtos
     @Transactional
-    ProductPostResponse createProduct(ProductRequest request){
+    public ProductPostResponse createProduct(ProductRequest request){
         // busca a categoria
         Category category = globalHelperService.getCategoryById(request.categoryId());
 
@@ -37,19 +40,32 @@ public class ProductService {
         // relaciona com categoria
         product.setCategory(category);
 
+
         // percorrer os atributos e criar eles
         for (ProductAttributeRequest attribute : request.attributes()){
             ProductAttribute productAttribute = productAttributeService
                     .createProductAttribute(product, attribute.name());
 
+            // garante o relacionamento dos 2 lados
+            product.addProductAttribute(productAttribute);
+
             // cria as opções para cada atributo
             for (String option : attribute.options()){
-                productAttributeOptionService.createAttributeOption(productAttribute, option);
+                ProductAttributeOption attributeOption = productAttributeOptionService
+                        .createAttributeOption(productAttribute, option);
+
+                // garante o relacionamento dos 2 lados
+                productAttribute.addOption(attributeOption);
             }
         }
 
+        // salva o produto
+        Product productSave = productRepository.save(product);
 
-        return productMapper.toProductPostResponse(productRepository.save(product));
+        // cria uma variante padrão para o produto criado
+        productVariantService.createStandardVariant(product);
+
+        return productMapper.toProductPostResponse(productSave);
 
     }
 

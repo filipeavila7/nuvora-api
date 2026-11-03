@@ -34,4 +34,10 @@ public class ProductAttribute {
     @OneToMany(mappedBy = "productAttribute")
     private List<ProductAttributeOption> options = new ArrayList<>();
 
+
+    public void addOption(ProductAttributeOption option) {
+        options.add(option);
+        option.setProductAttribute(this);
+    }
+
 }

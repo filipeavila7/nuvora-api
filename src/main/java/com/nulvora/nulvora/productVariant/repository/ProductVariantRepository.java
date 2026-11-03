@@ -18,4 +18,7 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     WHERE v.product.id = :productId
 """)
     BigDecimal findMinPriceByProductId(Long productId);
+
+
+    boolean existsBySku(String sku);
 }

@@ -14,6 +14,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_variant_attribute",
+                        columnNames = {
+                                "product_variant_id",
+                                "product_attribute_option_id"
+                        }
+                )
+        }
+)
 public class VariantAttribute {
 
     @Id

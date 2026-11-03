@@ -1,4 +1,4 @@
 package com.nulvora.nulvora.productVariant.dto.response;
 
-public class ProductVariantResponse {
+public record ProductVariantResponse() {
 }

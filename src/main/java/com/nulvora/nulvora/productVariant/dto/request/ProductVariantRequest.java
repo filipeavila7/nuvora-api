@@ -1,4 +1,12 @@
 package com.nulvora.nulvora.productVariant.dto.request;
 
-public class ProductVariantRequest {
+import java.math.BigDecimal;
+
+public record ProductVariantRequest(
+        String sku,
+        String name,
+        BigDecimal price,
+        Integer stockQuantity
+
+) {
 }

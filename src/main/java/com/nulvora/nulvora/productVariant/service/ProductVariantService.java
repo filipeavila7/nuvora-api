@@ -1,11 +1,16 @@
 package com.nulvora.nulvora.productVariant.service;
 
 import com.nulvora.nulvora.product.entity.Product;
+import com.nulvora.nulvora.product.repository.ProductRepository;
+import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
+import com.nulvora.nulvora.productVariant.dto.response.ProductVariantResponse;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import com.nulvora.nulvora.productVariant.mapper.ProductVariantMapper;
 import com.nulvora.nulvora.productVariant.repository.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -14,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductVariantService {
     private final ProductVariantRepository productVariantRepository;
+    private final ProductRepository productRepository;
     private final ProductVariantMapper productVariantMapper;
 
     // criar variante padrão automaticamente
@@ -30,6 +36,22 @@ public class ProductVariantService {
     }
 
 
+    public ProductVariantResponse createVariant(Long productId, ProductVariantRequest request){
+        Product product = getActiveProductOrThrow(productId);
+
+
+    }
+
+
+
+    public Product getActiveProductOrThrow(Long productId) {
+        return productRepository.findByIdAndActiveTrue(productId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Produto não encontrado"
+                ));
+    }
+
 
     // gerar sku aleatório
     private String generateSku() {
@@ -41,7 +63,7 @@ public class ProductVariantService {
     }
 
     // caso o sku aleatório ja exista, cria outro
-    private String generateUniqueSku() {
+    public String generateUniqueSku() {
         String sku;
 
         do {
@@ -50,6 +72,8 @@ public class ProductVariantService {
 
         return sku;
     }
+
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.nulvora.nulvora.productVariant.mapper;
 
 import com.nulvora.nulvora.product.entity.Product;
+import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,4 +19,7 @@ public interface ProductVariantMapper {
     @Mapping(target = "default", constant = "true")
     @Mapping(target = "active", constant = "true")
     ProductVariant toDefaultVariant(Product product);
+
+
+    ProductVariant toEntity(ProductVariantRequest request);
 }

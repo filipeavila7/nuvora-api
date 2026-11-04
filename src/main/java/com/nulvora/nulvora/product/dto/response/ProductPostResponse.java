@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record ProductPostResponse(
+        Long id,
         String name,
         String categoryName,
         String imageUrl,

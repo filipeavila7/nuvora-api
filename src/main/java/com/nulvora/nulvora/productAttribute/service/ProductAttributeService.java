@@ -8,6 +8,9 @@ import com.nulvora.nulvora.productAttribute.repository.ProductAttributeRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class ProductAttributeService {
@@ -20,5 +23,8 @@ public class ProductAttributeService {
                 save(productAttributeMapper.createProductAttribute(product, name));
 
     }
+
+
+
 
 }

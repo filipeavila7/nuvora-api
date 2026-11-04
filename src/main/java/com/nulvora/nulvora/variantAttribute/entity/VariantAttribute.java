@@ -33,7 +33,7 @@ public class VariantAttribute {
 
     @ManyToOne
     @JoinColumn(name = "product_attribute_option_id")
-    private ProductAttributeOption productAttributeOption;
+    private ProductAttributeOption option;
 
     @ManyToOne
     @JoinColumn(name = "product_variant_id")

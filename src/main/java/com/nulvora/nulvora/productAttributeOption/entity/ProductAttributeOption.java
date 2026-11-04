@@ -30,7 +30,7 @@ public class ProductAttributeOption {
     private ProductAttribute productAttribute;
 
 
-    @OneToMany(mappedBy = "productAttributeOption")
+    @OneToMany(mappedBy = "option")
     private List<VariantAttribute> variantAttributes = new ArrayList<>();
 
 

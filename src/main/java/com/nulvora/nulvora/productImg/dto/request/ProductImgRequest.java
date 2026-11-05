@@ -1,4 +1,6 @@
 package com.nulvora.nulvora.productImg.dto.request;
 
-public class ProductImgRequest {
-}
+public record ProductImgRequest(
+        String imageUrl,
+        boolean isPrimary
+) {}

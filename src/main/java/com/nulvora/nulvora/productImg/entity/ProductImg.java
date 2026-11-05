@@ -15,11 +15,11 @@ public class ProductImg {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String imageUrl;
+
+    private boolean isPrimary;
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductVariant productVariant;
-
-    private String imageUrl;
-
-    private Boolean isPrimary = false;
 }

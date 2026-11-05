@@ -176,7 +176,7 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
   - [ ] Definir `ProductVariantRequest` com validações rigorosas:
     - `@NotBlank` no `sku`, `@Positive` no `price`, `@Min(0)` no `stockQuantity`.
   - [ ] Definir `ProductVariantResponse`.
-  - [ ] Implementar `ProductVariantService`:
+  - [ ] Implementar `ProductVariantServiceTest`:
     - Criação de variantes garantindo unicidade global do `sku`.
     - Regra de negócio: garantir que haja apenas uma variante marcada como `isDefault` por produto.
     - Atualização de preço e dados cadastrais.
@@ -383,7 +383,7 @@ Este documento representa o levantamento arquitetural completo e o backlog técn
   - Estado Atual: Existe apenas a classe `NuvoraApplicationTests` vazia.
   - [ ] Testes unitários de `AuthService` e `RefreshTokenService` (fluxos de login com credenciais válidas e inválidas, renovação de token expirado/revogado, rotação de tokens).
   - [ ] Testes unitários de `OrderService` (cálculo de descontos, validação de itens esgotados, transições inválidas de status).
-  - [ ] Testes unitários de concorrência e baixa de estoque em `ProductVariantService`.
+  - [ ] Testes unitários de concorrência e baixa de estoque em `ProductVariantServiceTest`.
   - [ ] Testes unitários do webhook da Stripe em `PaymentService` (verificação de assinatura, idempotência em eventos repetidos).
 
 - [ ] **[P1]** **Testes de Integração com Banco de Dados e Testcontainers**

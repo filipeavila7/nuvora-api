@@ -1,7 +1,9 @@
 package com.nulvora.nulvora.productVariant.service;
 
+import com.nulvora.nulvora.helper.GlobalHelperService;
 import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.product.repository.ProductRepository;
+import com.nulvora.nulvora.product.service.ProductService;
 import com.nulvora.nulvora.productAttributeOption.service.ProductAttributeOptionService;
 import com.nulvora.nulvora.productImg.service.ProductImgService;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
@@ -23,11 +25,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductVariantService {
     private final ProductVariantRepository productVariantRepository;
-    private final ProductRepository productRepository;
     private final ProductVariantMapper productVariantMapper;
     private final VariantAttributeService variantAttributeService;
     private final ProductAttributeOptionService productAttributeOptionService;
     private final ProductImgService productImgService;
+    private final GlobalHelperService globalHelperService;
+
 
     // criar variante padrão automaticamente
     public void createStandardVariant(Product product){
@@ -46,7 +49,7 @@ public class ProductVariantService {
     // criar variante de produtos
     @Transactional
     public ProductVariantResponse createVariant(Long productId, ProductVariantRequest request){
-        Product product = getActiveProductOrThrow(productId);
+        Product product = globalHelperService.getActiveProductOrThrow(productId);
 
         // verificar se os ids das opções passadas representam uma combinação ja existente
         variantAttributeService.validateVariantCombination(request.optionsIds(), productId);
@@ -77,13 +80,7 @@ public class ProductVariantService {
 
 
 
-    public Product getActiveProductOrThrow(Long productId) {
-        return productRepository.findByIdAndActiveTrue(productId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Produto não encontrado"
-                ));
-    }
+
 
 
     // gerar sku aleatório

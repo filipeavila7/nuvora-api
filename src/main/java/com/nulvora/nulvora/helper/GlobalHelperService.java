@@ -2,6 +2,8 @@ package com.nulvora.nulvora.helper;
 
 import com.nulvora.nulvora.category.entity.Category;
 import com.nulvora.nulvora.category.repository.CategoryRepository;
+import com.nulvora.nulvora.product.entity.Product;
+import com.nulvora.nulvora.product.repository.ProductRepository;
 import com.nulvora.nulvora.profile.repository.ProfileRepository;
 import com.nulvora.nulvora.user.entity.User;
 import com.nulvora.nulvora.user.repository.UserRepository;
@@ -18,6 +20,7 @@ public class GlobalHelperService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
 
     // pegar user logado no contexto da aplicação
@@ -74,15 +77,12 @@ public class GlobalHelperService {
     }
 
 
-
-    // verificar se eixste categoria pelo id
-    public Category getCategoryById(Long categoryId){
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "Categoria não encontrada")
-                );
+    public Product getActiveProductOrThrow(Long productId) {
+        return productRepository.findByIdAndActiveTrue(productId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Produto não encontrado"
+                ));
     }
-
 
 }

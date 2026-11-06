@@ -1,7 +1,7 @@
 package com.nulvora.nulvora.product.controller;
 
 import com.nulvora.nulvora.product.dto.request.ProductRequest;
-import com.nulvora.nulvora.product.dto.response.ProductPostResponse;
+import com.nulvora.nulvora.product.dto.response.ProductResponse;
 
 import com.nulvora.nulvora.product.service.ProductService;
 import jakarta.validation.Valid;
@@ -20,7 +20,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/new")
-    public ResponseEntity<ProductPostResponse> createProduct(
+    public ResponseEntity<ProductResponse> createProduct(
             @Valid @RequestBody ProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(request));
     }

@@ -1,4 +1,7 @@
 package com.nulvora.nulvora.productImg.dto.response;
 
-public class ProductImgResponse {
-}
+public record ProductImgResponse(
+        Long id,
+        String imageUrl,
+        boolean primary
+) {}

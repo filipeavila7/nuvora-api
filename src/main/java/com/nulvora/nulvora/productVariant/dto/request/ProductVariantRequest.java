@@ -1,8 +1,10 @@
 package com.nulvora.nulvora.productVariant.dto.request;
 
+import com.nulvora.nulvora.productImg.dto.request.ProductImgRequest;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 public record ProductVariantRequest(
@@ -26,7 +28,11 @@ public record ProductVariantRequest(
         Integer stockQuantity,
 
         @NotEmpty(message = "Informe as opções da variante")
-        Set<@NotNull Long> optionsIds
+        Set<@NotNull Long> optionsIds,
+
+        @NotEmpty(message = "Envie pelo menos uma imagem")
+        @Size(max = 5, message = "O produto pode ter no máximo 5 imagens")
+        List<ProductImgRequest> images
 
 
 

@@ -3,6 +3,7 @@ package com.nulvora.nulvora.productVariant.service;
 import com.nulvora.nulvora.product.entity.Product;
 import com.nulvora.nulvora.product.repository.ProductRepository;
 import com.nulvora.nulvora.productAttributeOption.service.ProductAttributeOptionService;
+import com.nulvora.nulvora.productImg.service.ProductImgService;
 import com.nulvora.nulvora.productVariant.dto.request.ProductVariantRequest;
 import com.nulvora.nulvora.productVariant.dto.response.ProductVariantResponse;
 import com.nulvora.nulvora.productVariant.entity.ProductVariant;
@@ -26,6 +27,7 @@ public class ProductVariantService {
     private final ProductVariantMapper productVariantMapper;
     private final VariantAttributeService variantAttributeService;
     private final ProductAttributeOptionService productAttributeOptionService;
+    private final ProductImgService productImgService;
 
     // criar variante padrão automaticamente
     public void createStandardVariant(Product product){
@@ -59,9 +61,13 @@ public class ProductVariantService {
         // salva a variante no banco
         ProductVariant variantSave = productVariantRepository.save(variant);
 
+        // salva as imagens no banco
+        productImgService.createVariantImgs(variantSave, request.images());
+
         // percorre as opções e salva no banco
         for (Long optionId : request.optionsIds()){
             variantAttributeService.createVariantAttribute(variant, optionId );
+
         }
 
         // salva

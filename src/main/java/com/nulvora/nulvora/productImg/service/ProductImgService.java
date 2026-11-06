@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -32,18 +33,27 @@ public class ProductImgService {
             );
         }
 
-        if (primaryCount < 1){
 
-        }
+        // cria as imagens, percorre pelo indice da lista
+        List<ProductImg> productImgs = IntStream.range(0, images.size())
+                .mapToObj(index -> {
+                    ProductImgRequest img = images.get(index);
 
-        // cria as imagens
-        List<ProductImg> productImgs = images.stream()
-                .map(img -> {
                     ProductImg productImg = new ProductImg();
 
                     productImg.setImageUrl(img.imageUrl());
-                    productImg.setPrimary(img.isPrimary());
+
+                    // relação inversa
+                    productVariant.getProductImgs().add(productImg);
+
+                    // caso não tenha mandado nenhuma foto primária, a foto do indice 0 será automaticamente a primária
+                    boolean isPrimary = primaryCount < 1 && index == 0
+                            || img.isPrimary();
+
+                    productImg.setPrimary(isPrimary);
                     productImg.setProductVariant(productVariant);
+
+
 
                     return productImg;
                 })

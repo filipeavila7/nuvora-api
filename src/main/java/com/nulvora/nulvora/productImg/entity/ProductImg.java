@@ -17,9 +17,10 @@ public class ProductImg {
 
     private String imageUrl;
 
-    private boolean isPrimary;
+    @Column(name = "is_primary")
+    private boolean primary;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_variant_id")
     private ProductVariant productVariant;
 }
